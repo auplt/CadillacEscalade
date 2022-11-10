@@ -1,0 +1,7 @@
+# server
+/server/venv
+/server/conf.yaml
+# client
+/client/node_modules
+/client/.pnp
+/client/.pnp.js
