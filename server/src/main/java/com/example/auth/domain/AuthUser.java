@@ -26,20 +26,23 @@ public class AuthUser {
             generator = "authuser_sequence"
     )
     private Long id;
-    private String name;
+
     private String username;
     private String password;
     private String phoneNumber;
     private String email;
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<AuthRole> roles = new ArrayList<>();
-
-    public AuthUser(String name, String username, String password, Collection<AuthRole> roles, String phoneNumber, String email) {
-        this.name = name;
+    @ManyToMany()
+    private Collection<Donate> donates = new ArrayList<>();
+    public AuthUser(String username, String password,
+                    Collection<AuthRole> roles, String phoneNumber,
+                    String email, Collection<Donate> donates) {
         this.username = username;
         this.password = password;
         this.roles = roles;
         this.phoneNumber = phoneNumber;
         this.email = email;
+        this.donates = donates;
     }
 }

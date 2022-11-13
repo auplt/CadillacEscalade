@@ -9,56 +9,109 @@ import com.example.auth.domain.AuthRole;
 import com.example.auth.domain.AuthUser;
 import com.example.auth.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URI;
+import java.security.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.stream;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
 @RestController
 @CrossOrigin("*")
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/donate")
+@RequestMapping("/api/v1/auth")
 public class UserResourse {
     private final UserService userService;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/users")
     public ResponseEntity<List<AuthUser>> getUser() {
+        log.info("информация по всем пользователям была извлечена из базы данных");
         return ResponseEntity.ok().body(userService.getUsers());
     }
 
+    @GetMapping("/user")
+    public ResponseEntity<?> userInfo(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        if (authorizationHeader!= null && authorizationHeader.startsWith("Bearer ")) {
+            try {
+                String token = authorizationHeader.substring("Bearer ".length());
+                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+                JWTVerifier verifier = JWT.require(algorithm).build();
+                DecodedJWT decodedJWT = verifier.verify(token);
+                String username = decodedJWT.getSubject();
+                AuthUser user = userService.getUser(username);
+                Date exp = decodedJWT.getExpiresAt();
+                Date timeStampMillis = new Date(System.currentTimeMillis());
+//                DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+//                String strExp = dateFormat.format(exp);
+//                String now = dateFormat.format(timeStampMillis);
+//                log.info("upd {}", strDate);
+//                if () {
+//
+//                }
+
+                HashMap<String, String> data = new HashMap<>();
+                data.put("username", user.getUsername());
+                data.put("email", user.getEmail());
+                data.put("phone_number", user.getPhoneNumber());
+                data.put("img", null);
+                return new ResponseEntity<>(data, HttpStatus.OK);
+            }
+            catch (Exception exception) {
+                log.error("Error logging in: {}", exception.getMessage());
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+        }
+        else {
+            return new ResponseEntity<>("provide required token",HttpStatus.FORBIDDEN);
+        }
+    }
     @PostMapping("/user/save")
     public ResponseEntity<AuthUser> saveUser(@RequestBody AuthUser authUser) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/user/save").toUriString());
         userService.saveUser(authUser);
         userService.addRoleToUser(authUser.getUsername(), "ROLE_USER");
+        log.info("пользователь с именем {} был добавлен в базу данных", authUser.getUsername());
+        return ResponseEntity.ok().body(authUser);
+    }
+
+    @PostMapping("/streamer/save")
+    public ResponseEntity<AuthUser> saveStreamer(@RequestBody AuthUser authUser) {
+        userService.saveUser(authUser);
+        userService.addRoleToUser(authUser.getUsername(), "ROLE_STEAMER");
+        log.info("стример с именем {} был добавлен в базу данных", authUser.getUsername());
         return ResponseEntity.ok().body(authUser);
     }
 
     @PostMapping("/role/save")
     public ResponseEntity<AuthRole> saveUser(@RequestBody AuthRole authRole) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("api/role/save").toUriString());
-        return ResponseEntity.created(uri).body(userService.saveRole(authRole));
+        userService.saveRole(authRole);
+        log.info("роль {} была добавлена в базу данных", authRole);
+        return ResponseEntity.ok().body(authRole);
     }
 
     @PostMapping("/role/addroletouser")
     public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserForm form) {
         userService.addRoleToUser(form.getUsername(), form.getRoleName());
+        log.info("пользователю {} была присвоена роль {}",form.getUsername(), form.getRoleName());
         return ResponseEntity.ok().build();
     }
 
@@ -98,9 +151,3 @@ public class UserResourse {
         }
     }
 }
-
-//@Data
-//class RoleToUserForm {
-//    private String username;
-//    private String roleName;
-//}

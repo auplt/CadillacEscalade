@@ -2,6 +2,8 @@ package com.example.auth.service;
 
 import com.example.auth.domain.AuthRole;
 import com.example.auth.domain.AuthUser;
+import com.example.auth.domain.Donate;
+import com.example.auth.repo.DonateRepo;
 import com.example.auth.repo.RoleRepo;
 import com.example.auth.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
+    private final DonateRepo donateRepo;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -57,6 +60,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public List<AuthUser> getUsers() {
         return userRepo.findAll();
+    }
+
+    @Override
+    @Transactional
+    public void addDonateToUser(String username, Long id_donate) {
+        AuthUser user = userRepo.findByUsername(username);
+        Donate donate = donateRepo.getReferenceById(id_donate);
+        user.getDonates().add(donate);
     }
 
     @Override

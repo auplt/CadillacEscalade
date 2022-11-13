@@ -12,4 +12,5 @@ public interface UserService {
     void addRoleToUser(String username, String rolename);
     AuthUser getUser(String username);
     List<AuthUser> getUsers();
+    void addDonateToUser(String username, Long id_donate);
 }
