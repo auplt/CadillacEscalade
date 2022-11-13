@@ -5,7 +5,7 @@ import DashboardPage from "components/Dashboard/DashboardPage";
 import NavBar from "components/NavBar/NavBar";
 import PrivateWrapper from "components/PrivateWrapper";
 import { ServerAPI_GET } from "libs/ServerAPI";
-import { DeleteToken, GetToken, HasToken } from "libs/Token";
+import { DeleteToken, HasToken } from "libs/Token";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "redux/hooks";
 import { selectUser, setUserData } from "redux/slices/userSlice";
@@ -16,6 +16,7 @@ const App = () => {
     const dispatch = useAppDispatch();
 
     const tryLogin = () => {
+        console.log("TryLogin");
         if (HasToken()) {
             ServerAPI_GET({
                 url: "/api/v1/auth/user",
@@ -44,8 +45,8 @@ const App = () => {
 
     useEffect(() => {
         tryLogin();
-        //const data = { username: "Никнейм" };
-        //dispatch(setUserData({ isAuth: true, ...data }));
+        const data = { username: "Никнейм" };
+        dispatch(setUserData({ isAuth: true, ...data }));
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -77,7 +78,7 @@ const App = () => {
                             </Route>
                         </Routes>
                     </div>
-                    <input type="button" value="T" onClick={() => console.log(GetToken())} />
+                    {/* <input type="button" value="T" onClick={() => console.log(GetToken())} /> */}
                 </>
             )}
         </div>

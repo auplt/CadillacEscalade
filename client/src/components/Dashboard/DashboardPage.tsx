@@ -17,7 +17,12 @@ const DashboardPage = () => {
                 {
                     username: "Vasia",
                     message: "Lorem ipsum, dolor sit amet consectetur adipisicing elit.",
-                    //date: new Date(),
+                    date: "2022-11-13 22:30:41",
+                },
+                {
+                    username: "Petia",
+                    message: "Lorem ipsum, dolor sit amet consectetur adipisicing elit.",
+                    date: "2022-11-12 22:30:41",
                 },
             ],
         };

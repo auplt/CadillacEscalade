@@ -6,10 +6,10 @@ type DashboardHistoryItemProps = {
 
 const DashboardHistoryItem = ({ item }: DashboardHistoryItemProps) => {
     return (
-        <div>
+        <div style={{ borderBottom: "1px solid black" }}>
             <div>
-                <span>{item.username}</span>
-                {/* <span>{" " + item.date.toLocaleDateString("ru-RU") + " " + item.date.toLocaleTimeString("ru-RU")}</span> */}
+                <span className="me-5">{item.username}</span>
+                <span className="ps-5">{item.date}</span>
             </div>
             <div>{item.message}</div>
         </div>
