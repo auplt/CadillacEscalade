@@ -2,11 +2,15 @@ import React from "react";
 import NavBarAuth from "./NavBarAuth";
 import NavBarLogo from "./NavBarLogo";
 
-const NavBar = () => {
+type NavBarProps = {
+    drawAuth: boolean;
+};
+
+const NavBar = ({ drawAuth }: NavBarProps) => {
     return (
         <nav className="navbar navbar-expand justify-content-between main-navbar">
             <NavBarLogo />
-            <NavBarAuth />
+            {drawAuth && <NavBarAuth />}
         </nav>
     );
 };

@@ -1,3 +1,4 @@
+import { ServerAPI_GET } from "libs/ServerAPI";
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "redux/hooks";
 import { selectDashboard, setDashboardPreview } from "redux/slices/dashboardSlice";
@@ -12,21 +13,28 @@ const DashboardPage = () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        const data = {
-            history: [
-                {
-                    username: "Vasia",
-                    message: "Lorem ipsum, dolor sit amet consectetur adipisicing elit.",
-                    date: "2022-11-13 22:30:41",
-                },
-                {
-                    username: "Petia",
-                    message: "Lorem ipsum, dolor sit amet consectetur adipisicing elit.",
-                    date: "2022-11-12 22:30:41",
-                },
-            ],
-        };
-        dispatch(setDashboardPreview(data));
+        ServerAPI_GET({
+            url: "/api/v1/donate/user_donates",
+            onDataReceived: (data) => {
+                dispatch(setDashboardPreview({ history: data }));
+            },
+        });
+        //const data = {
+        //    history: [
+        //        {
+        //            username: "Vasia",
+        //            message: "Lorem ipsum, dolor sit amet consectetur adipisicing elit.",
+        //            date: "2022-11-13 22:30:41",
+        //        },
+        //        {
+        //            username: "Petia",
+        //            message: "Lorem ipsum, dolor sit amet consectetur adipisicing elit.",
+        //            date: "2022-11-12 22:30:41",
+        //        },
+        //    ],
+        //};
+        //dispatch(setDashboardPreview(data));
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

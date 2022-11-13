@@ -3,6 +3,7 @@ import dashboardSlice from "./slices/dashboardSlice";
 import userSlice from "./slices/userSlice";
 import formRegisterSlice from "./slices/formRegisterSlice";
 import formLoginSlice from "./slices/formLoginSlice";
+import formDonateSlice from "./slices/formDonateSlice";
 
 const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
         dashboard: dashboardSlice,
         formRegister: formRegisterSlice,
         formLogin: formLoginSlice,
+        formDonate: formDonateSlice,
     },
 });
 
