@@ -53,7 +53,6 @@ public class UserResourse {
                 DecodedJWT decodedJWT = verifier.verify(token);
                 String username = decodedJWT.getSubject();
                 AuthUser user = userService.getUser(username);
-//                Date exp = decodedJWT.getExpiresAt();
                 HashMap<String, String> res = new HashMap<>();
                 res.put("logout", "ok");
                 new SecurityContextLogoutHandler().logout(request, response, auth);
