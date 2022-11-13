@@ -11,23 +11,17 @@ import com.example.auth.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,6 +41,40 @@ public class UserResourse {
         log.info("информация по всем пользователям была извлечена из базы данных");
         return ResponseEntity.ok().body(userService.getUsers());
     }
+    @GetMapping("/perform_logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (authorizationHeader!= null && authorizationHeader.startsWith("Bearer ")) {
+            try {
+                String token = authorizationHeader.substring("Bearer ".length());
+                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+                JWTVerifier verifier = JWT.require(algorithm).build();
+                DecodedJWT decodedJWT = verifier.verify(token);
+                String username = decodedJWT.getSubject();
+                AuthUser user = userService.getUser(username);
+//                Date exp = decodedJWT.getExpiresAt();
+                HashMap<String, String> res = new HashMap<>();
+                res.put("logout", "ok");
+                new SecurityContextLogoutHandler().logout(request, response, auth);
+                return new ResponseEntity<>(res, HttpStatus.OK);
+            }
+            catch (Exception exception) {
+                log.error("Error logging in: {}", exception.getMessage());
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+        }
+        else {
+            return new ResponseEntity<>("provide required token",HttpStatus.FORBIDDEN);
+        }
+//
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//
+//        if (auth != null){
+//            new SecurityContextLogoutHandler().logout(request, response, auth);
+//        }
+//        return "redirect:/login?logout";
+    }
 
     @GetMapping("/user")
     public ResponseEntity<?> userInfo(HttpServletRequest request) {
@@ -59,16 +87,7 @@ public class UserResourse {
                 DecodedJWT decodedJWT = verifier.verify(token);
                 String username = decodedJWT.getSubject();
                 AuthUser user = userService.getUser(username);
-                Date exp = decodedJWT.getExpiresAt();
-                Date timeStampMillis = new Date(System.currentTimeMillis());
-//                DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-//                String strExp = dateFormat.format(exp);
-//                String now = dateFormat.format(timeStampMillis);
-//                log.info("upd {}", strDate);
-//                if () {
-//
-//                }
-
+//                Date exp = decodedJWT.getExpiresAt();
                 HashMap<String, String> data = new HashMap<>();
                 data.put("username", user.getUsername());
                 data.put("email", user.getEmail());
