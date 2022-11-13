@@ -45,8 +45,8 @@ const App = () => {
 
     useEffect(() => {
         tryLogin();
-        const data = { username: "Никнейм" };
-        dispatch(setUserData({ isAuth: true, ...data }));
+        //const data = { username: "Никнейм" };
+        //dispatch(setUserData({ isAuth: true, ...data }));
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
