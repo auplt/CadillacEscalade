@@ -24,13 +24,18 @@ export const userSlice = createSlice({
         setUserData: (state, action) => {
             state.isAuth = action.payload.isAuth;
             state.username = action.payload.username;
-            state.icon = action.payload.icon;
+            state.name = action.payload.name;
+            state.surname = action.payload.surname;
+            state.icon = action.payload.img;
+        },
+        setUserIsAuth: (state, action) => {
+            state.isAuth = action.payload;
         },
     },
 });
 
 export const selectUser = (state: RootState) => state.user;
 
-export const { setUserData } = userSlice.actions;
+export const { setUserData, setUserIsAuth } = userSlice.actions;
 
 export default userSlice.reducer;
