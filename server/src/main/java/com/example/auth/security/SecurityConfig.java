@@ -28,21 +28,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
     }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         CustomAuthentifcationFilter customAuthentifcationFilter = new CustomAuthentifcationFilter(authenticationManagerBean());
-        customAuthentifcationFilter.setFilterProcessesUrl("/api/v1/donate/login");
+        customAuthentifcationFilter.setFilterProcessesUrl("/api/v1/auth/login");
         http.cors().and().csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/api/v1/donate/login").permitAll();
+        http.authorizeRequests().antMatchers("/api/v1/auth/login").permitAll();
+        http.authorizeRequests().antMatchers("/api/v1/auth/streamer/save").permitAll();
+        http.authorizeRequests().antMatchers("/api/v1/auth/user/save").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/user/**", "/token/refresh/**").hasAuthority("ROLE_USER");
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/admin/**").hasAuthority("ROLE_ADMIN");
+        http.logout().logoutUrl("/api/v1/auth/logout");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthentifcationFilter);
         http.addFilterBefore(new CustomAuthorisationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
-
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {

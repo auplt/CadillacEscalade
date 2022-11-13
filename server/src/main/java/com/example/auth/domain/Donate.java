@@ -15,13 +15,15 @@ public class Donate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    private String name;
+    private String sender;
+    private String username;
     private Float summ;
     private String date;
     private String comment;
 
-    public Donate(String name, Float summ, String date, String comment) {
-        this.name = name;
+    public Donate(String username, String sender, Float summ, String date, String comment) {
+        this.username = username;
+        this.sender = sender;
         this.summ = summ;
         this.date = date;
         this.comment = comment;

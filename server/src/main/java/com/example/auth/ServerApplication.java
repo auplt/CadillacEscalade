@@ -18,10 +18,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import java.util.ArrayList;
 
 @SpringBootApplication
-public class AuthApplication {
+public class ServerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AuthApplication.class, args);
+        SpringApplication.run(ServerApplication.class, args);
     }
 
     @Bean
@@ -41,22 +41,29 @@ public class AuthApplication {
     @Bean
     CommandLineRunner run(UserService userService, DonateService donateService) {
         return args -> {
-            donateService.saveDonate(new Donate("bob", 44.5F, "2022-10-01", "awesome stream"));
-            donateService.saveDonate(new Donate("dug", 442.5F, "2022-08-12", "good luck on next game"));
+            donateService.saveDonate(new Donate("john3", "cool_dave", 44.5F, "2022-10-01", "awesome stream"));
+            donateService.saveDonate(new Donate("john3", "sleepy_bro", 442.5F, "2022-08-12", "good luck on next game"));
 
             userService.saveRole(new AuthRole("ROLE_USER"));
-            userService.saveRole(new AuthRole("ROLE_ADMIN"));
+            userService.saveRole(new AuthRole("ROLE_STEAMER"));
 
-            userService.saveUser(new AuthUser("John", "john3", "1234", new ArrayList<>(), "", ""));
-            userService.saveUser(new AuthUser("David", "dv44", "1234",new ArrayList<>(), "", ""));
-            userService.saveUser(new AuthUser("Ross", "user", "1234", new ArrayList<>(), "", ""));
-            userService.saveUser(new AuthUser("Chandler", "chb", "1234",new ArrayList<>(), "", ""));
+            userService.saveUser(new AuthUser("john3", "1234", new ArrayList<>(),
+                    "", "", new ArrayList<>()));
+            userService.saveUser(new AuthUser("dv44", "1234",new ArrayList<>(),
+                    "", "", new ArrayList<>()));
+            userService.saveUser(new AuthUser( "user", "1234", new ArrayList<>(),
+                    "", "", new ArrayList<>()));
+            userService.saveUser(new AuthUser("chb", "1234",new ArrayList<>(),
+                    "", "", new ArrayList<>()));
 
             userService.addRoleToUser("john3", "ROLE_USER");
             userService.addRoleToUser("dv44", "ROLE_USER");
             userService.addRoleToUser("user", "ROLE_USER");
-            userService.addRoleToUser("chb", "ROLE_ADMIN");
+            userService.addRoleToUser("chb", "ROLE_STEAMER");
             userService.addRoleToUser("chb", "ROLE_USER");
+
+            userService.addDonateToUser("john3", 1L);
+            userService.addDonateToUser("john3", 2L);
         };
     }
 }
