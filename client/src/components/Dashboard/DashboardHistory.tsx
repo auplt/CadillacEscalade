@@ -8,7 +8,7 @@ type DashboardHistoryProps = {
 const DashboardHistory = ({ items }: DashboardHistoryProps) => {
     return (
         <div className="dashboard-history">
-            <div>История донатов</div>
+            <div style={{ borderBottom: "2px solid black" }}>История донатов</div>
             {items.map((item: any, key: number) => (
                 <DashboardHistoryItem item={item} key={key} />
             ))}
