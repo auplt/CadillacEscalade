@@ -39,6 +39,7 @@ type DashboardGraphicModalProps = {
 };
 
 const DashboardGraphicModal = ({ show, handleClose }: DashboardGraphicModalProps) => {
+    // TODO Get new Dada from server then fields changed
     return (
         <Modal show={show} onHide={handleClose} centered size="xl">
             <Modal.Header closeButton>
@@ -47,15 +48,19 @@ const DashboardGraphicModal = ({ show, handleClose }: DashboardGraphicModalProps
             <Modal.Body>
                 <div>
                     <span>
-                        От <input type="date" onChange={(e) => console.log(e.target.value)} />
+                        От <input type="date" className="modal-input" onChange={(e) => console.log(e.target.value)} />
                     </span>
                     <span className="ms-5">
-                        До <input type="date" onChange={(e) => console.log(e.target.value)} />
+                        До <input type="date" className="modal-input" onChange={(e) => console.log(e.target.value)} />
                     </span>
                 </div>
                 <div className="mt-4">
                     <span className="ms-5">
-                        Параметр <input type="date" onChange={(e) => console.log(e.target.value)} />
+                        Параметр{" "}
+                        <select className="modal-input">
+                            <option>Донаты по дням</option>
+                            <option>Донаты по месяцам</option>
+                        </select>
                     </span>
                 </div>
                 <div style={{ width: "100%", height: "600px", marginTop: "40px" }}>

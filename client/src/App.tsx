@@ -10,6 +10,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "redux/hooks";
 import { selectUser, setUserData } from "redux/slices/userSlice";
 import "./App.css";
+import DonatePage from "components/Donate/DonatePage";
 
 const App = () => {
     const user = useAppSelector(selectUser);
@@ -22,6 +23,7 @@ const App = () => {
                 url: "/api/v1/auth/user",
                 onDataReceived: (data) => {
                     if (data.access_token === undefined) {
+                        console.log(data);
                         dispatch(setUserData({ isAuth: true, ...data }));
                     } else {
                         dispatch(setUserData({ isAuth: false }));
@@ -62,18 +64,17 @@ const App = () => {
 
     return (
         <div className="App">
+            <NavBar drawAuth={user.isAuth !== undefined} />
             {user.isAuth === undefined ? (
-                <div>Loading . . .</div>
+                <></>
             ) : (
                 <>
-                    <NavBar />
                     <div className="container">
                         <Routes>
                             <Route path="/" element={NavigateIfLoged(<div>Main Page</div>)} />
                             <Route path="/login" element={NavigateIfLoged(<LogInPage tryLogin={tryLogin} />)} />
                             <Route path="/register" element={NavigateIfLoged(<RegisterPage tryLogin={tryLogin} />)} />
                             <Route element={<PrivateWrapper condition={user.isAuth} />}>
-                                <Route path="/test" element={<div>Test Page</div>} />
                                 <Route path="/dashboard" element={<DashboardPage />} />
                             </Route>
                         </Routes>
@@ -81,6 +82,9 @@ const App = () => {
                     {/* <input type="button" value="T" onClick={() => console.log(GetToken())} /> */}
                 </>
             )}
+            <Routes>
+                <Route path="/donate/:streamer" element={<DonatePage />} />
+            </Routes>
         </div>
     );
 };
